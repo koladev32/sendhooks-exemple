@@ -1,6 +1,29 @@
 version: '3.9'
 
 services:
+  nginx:
+    container_name: nginx
+    restart: on-failure
+    image: jonasal/nginx-certbot:latest
+    environment:
+      - CERTBOT_EMAIL=YOUR_MAIL
+      - DHPARAM_SIZE=2048
+      - RSA_KEY_SIZE=2048
+      - ELLIPTIC_CURVE=secp256r1
+      - USE_ECDSA=0
+      - RENEWAL_INTERVAL=8d
+    volumes:
+      - nginx_secrets:/etc/letsencrypt
+      - nginx.conf:/etc/nginx
+      - static_volume:/app/static
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - flask-api
+      - sendhooks
+      - sendhooks-monitoring
+
   redis:
     image: redis:latest
     hostname: redis
