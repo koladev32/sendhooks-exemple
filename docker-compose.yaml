@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: always
+    networks:
+      - sendhooks
+    ports:
+      - "6379:6379" # Exposes Redis on localhost via port 6379
+
+  sendhooks:
+    image: transfa/sendhooks
+    restart: on-failure
+    networks:
+      - sendhooks
+    depends_on:
+      - redis
+    volumes:
+      - ./config.json:/root/config.json # Mounts config.json from host to container
+
+  flask-api:
+    build: ./api/
+    restart: on-failure
+    networks:
+      - sendhooks
+    ports:
+      - "5001:5000" # Exposes Flask API on localhost via port 5001, internal port 5000
+    depends_on:
+      - sendhooks
+
+    sendhooks-monitoring:
+      image: transfa/sendhooks-monitoring
+      container_name: sendhooks-monitoring
+      restart: on-failure
+      env_file:
+        - .env.local
+      ports:
+        - "5002:5002"
+        - "3000:3000"
+      depends_on:
+        - sendhooks
+
+networks:
+  sendhooks:
+    driver: bridge
