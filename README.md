@@ -1,5 +1,7 @@
 # Sendhooks example
 
+Codebase for the article at https://dev.to/koladev/10-minute-guide-to-building-a-webhook-service-with-sendhooks-3lbm.
+
 1. Clone or download the repository.
 2. Run `docker-compose up -d --build` to start the project. This will start a container for the dashboard (port 3000), backend (port 5002) and API (port 5001).
 3. Once the containers are running, navigate to <http://localhost:3000> in your web browser to access the dashboard.
